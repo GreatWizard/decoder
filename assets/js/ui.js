@@ -19,7 +19,10 @@ globalThis.onDecoderChange = (value) => {
   if (aes.detect(encoded)) {
     decoded = aes.decode(encoded);
   } else {
-    decoded = b64.decode(encoded);
+    decoded = encoded;
+    do {
+      decoded = b64.decode(decoded);
+    } while (b64.detect(decoded));
   }
   const resultURL = document.getElementById("result-decoder-url");
   const labelURL = document.getElementById("label-decoder-url");
