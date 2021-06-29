@@ -15,14 +15,13 @@ globalThis.waitBefore = (name, funcName, data, timeout = 250) => {
 
 globalThis.onDecoderChange = (value) => {
   const encoded = value.trim();
-  let decoded;
-  if (aes.detect(encoded)) {
-    decoded = aes.decode(encoded);
-  } else {
-    decoded = encoded;
-    do {
+  let decoded = encoded;
+  while (aes.detect(decoded) || b64.detect(decoded)) {
+    if (aes.detect(decoded)) {
+      decoded = aes.decode(decoded);
+    } else if (b64.detect(decoded)) {
       decoded = b64.decode(decoded);
-    } while (b64.detect(decoded));
+    }
   }
   const resultURL = document.getElementById("result-decoder-url");
   const labelURL = document.getElementById("label-decoder-url");
