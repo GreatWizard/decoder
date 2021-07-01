@@ -1,5 +1,6 @@
 import aes from "./aes";
 import b64 from "./b64";
+import escape from "./escape";
 
 globalThis.waiters = {};
 
@@ -17,13 +18,16 @@ globalThis.onDecoderChange = (value) => {
   const encoded = value.trim();
   let decoded = encoded;
   let iterations = [];
-  while (aes.detect(decoded) || b64.detect(decoded)) {
+  while (aes.detect(decoded) || b64.detect(decoded) || escape.detect(decoded)) {
     if (aes.detect(decoded)) {
       iterations.push("AES");
       decoded = aes.decode(decoded);
     } else if (b64.detect(decoded)) {
       iterations.push("Base64");
       decoded = b64.decode(decoded);
+    } else if (escape.detect(decoded)) {
+      iterations.push("escape");
+      decoded = escape.decode(decoded);
     }
   }
   if (iterations.length === 0) {
@@ -82,6 +86,8 @@ globalThis.onEncoderChange = (value, type = "b64") => {
     value.trim() !== undefined && value.trim() !== ""
       ? type === "aes"
         ? aes.encode(value.trim())
+        : type === "escape"
+        ? escape.encode(value.trim())
         : b64.encode(value.trim())
       : undefined;
   const result = document.getElementById("result-encoder");
