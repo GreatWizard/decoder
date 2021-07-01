@@ -31,7 +31,7 @@
       onkeyup="waitBefore('decoder', 'onDecoderChange', this.value)"
     ></textarea>
     <label id="label-decoder-url" for="result-decoder-url" class="hide"
-      >Result:</label
+      >Result<span id="label-decoder-url-iterations"></span>:</label
     >
     <a
       id="result-decoder-url"
@@ -41,9 +41,16 @@
       rel="noreferrer noopener"
     ></a>
     <label id="label-decoder-other" for="result-decoder-other" class="hide"
-      >Result:</label
+      >Result<span id="label-decoder-other-iterations"></span>:</label
     >
     <blockquote id="result-decoder-other" class="hide"></blockquote>
+    <button
+      id="copy-decoded"
+      onclick="copyFromId('result-decoder-other')"
+      class="hide"
+    >
+      Copy
+    </button>
     <hr />
     <h1>Encoder</h1>
     <label for="encoder">Text to encode:</label>
@@ -55,5 +62,12 @@
     ></textarea>
     <label id="label-encoder" for="result-encoder" class="hide">Result:</label>
     <blockquote id="result-encoder" class="hide"></blockquote>
+    <button
+      id="copy-encoded"
+      onclick="copyFromId('result-encoder')"
+      class="hide"
+    >
+      Copy
+    </button>
   </body>
 </html>
