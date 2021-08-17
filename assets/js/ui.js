@@ -1,6 +1,13 @@
+import "core-js/stable";
+import "regenerator-runtime/runtime";
+
 import aes from "./aes";
 import b64 from "./b64";
 import escape from "./escape";
+import sc from "./sc";
+
+const isUrl = (value) =>
+  value && (value.startsWith("http://") || value.startsWith("https://"));
 
 globalThis.waiters = {};
 
@@ -14,20 +21,35 @@ globalThis.waitBefore = (name, funcName, data, timeout = 250) => {
   }, timeout);
 };
 
-globalThis.onDecoderChange = (value) => {
+globalThis.onDecoderChange = async (value) => {
   const encoded = value.trim();
   let decoded = encoded;
   let iterations = [];
-  while (aes.detect(decoded) || b64.detect(decoded) || escape.detect(decoded)) {
-    if (aes.detect(decoded)) {
-      iterations.push("AES");
-      decoded = aes.decode(decoded);
-    } else if (b64.detect(decoded)) {
-      iterations.push("Base64");
-      decoded = b64.decode(decoded);
+  let noMoreDetection = false;
+  while (!noMoreDetection) {
+    if (b64.detect(decoded)) {
+      let b64Decoded = await b64.decode(decoded);
+      let scDecoded = false;
+      if (!isUrl(b64Decoded)) {
+        let trySC = await sc.decode(decoded);
+        if (isUrl(trySC)) {
+          iterations.push("SC");
+          decoded = trySC;
+          scDecoded = true;
+        }
+      }
+      if (!scDecoded) {
+        iterations.push("Base64");
+        decoded = b64Decoded;
+      }
     } else if (escape.detect(decoded)) {
-      iterations.push("escape");
-      decoded = escape.decode(decoded);
+      iterations.push("Escape");
+      decoded = await escape.decode(decoded);
+    } else if (aes.detect(decoded)) {
+      iterations.push("AES");
+      decoded = await aes.decode(decoded);
+    } else {
+      noMoreDetection = true;
     }
   }
   if (iterations.length === 0) {
@@ -44,7 +66,7 @@ globalThis.onDecoderChange = (value) => {
     "label-decoder-other-iterations"
   );
   const copyDecoded = document.getElementById("copy-decoded");
-  if (decoded.startsWith("http://") || decoded.startsWith("https://")) {
+  if (isUrl(decoded)) {
     copyDecoded.classList.add("hide");
     resultOther.innerText = "";
     labelOtherIterations.innerText = "";
@@ -81,14 +103,16 @@ globalThis.onDecoderChange = (value) => {
   }
 };
 
-globalThis.onEncoderChange = (value, type = "b64") => {
+globalThis.onEncoderChange = async (value, type = "b64") => {
   const encoded =
     value.trim() !== undefined && value.trim() !== ""
       ? type === "aes"
-        ? aes.encode(value.trim())
+        ? await aes.encode(value.trim())
         : type === "escape"
-        ? escape.encode(value.trim())
-        : b64.encode(value.trim())
+        ? await escape.encode(value.trim())
+        : type === "sc"
+        ? await sc.encode(value.trim())
+        : await b64.encode(value.trim())
       : undefined;
   const result = document.getElementById("result-encoder");
   const label = document.getElementById("label-encoder");
