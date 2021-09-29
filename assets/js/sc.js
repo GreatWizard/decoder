@@ -9,11 +9,13 @@ const formBody = (body) => {
 
 const sc = {};
 
+const proxy = "https://cors.bridged.cc/";
+
 sc.detect = (text) => true;
 
 sc.decode = async (text) => {
   let response = await fetch(
-    "https://corsanywhere.herokuapp.com/https://nin10news.com/wp-content/themes/twentysixteen/inc/decode.php",
+    `${proxy}https://nin10news.com/wp-content/themes/twentysixteen/inc/decode.php`,
     {
       method: "POST",
       headers: {
@@ -35,7 +37,7 @@ sc.decode = async (text) => {
 
 sc.encode = async (text) => {
   let response = await fetch(
-    "https://corsanywhere.herokuapp.com/https://nin10news.com/wp-content/themes/twentysixteen/inc/encode.php",
+    `${proxy}https://nin10news.com/wp-content/themes/twentysixteen/inc/encode.php`,
     {
       method: "POST",
       headers: {
