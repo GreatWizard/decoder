@@ -9,7 +9,7 @@ const formBody = (body) => {
 
 const sc = {};
 
-const proxy = "https://cors.bridged.cc/";
+const proxy = "https://lan-play.com/proxy.php?method=POST&address=";
 
 sc.detect = (text) => true;
 
