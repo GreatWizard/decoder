@@ -1,7 +1,7 @@
 {
   "name": "decoder",
-  "version": "1.0.0",
-  "license": "MIT",
+  "version": "0.0.0",
+  "license": "AGPL-3.0-or-later",
   "scripts": {
     "start": "parcel assets/index.html",
     "prebuild": "rm -rf dist",
@@ -9,10 +9,10 @@
     "postbuild": "echo 'decoder.greatwizard.fr' > dist/CNAME"
   },
   "devDependencies": {
-    "@babel/preset-env": "^7.14.4",
-    "@parcel/transformer-sass": "2.0.0-nightly.716",
-    "crypto-js": "^4.0.0",
+    "@babel/preset-env": "^7.16.5",
+    "@parcel/transformer-sass": "^2.0.1",
+    "crypto-js": "^4.1.1",
     "milligram": "^1.4.1",
-    "parcel": "^2.0.0-beta.3.1"
+    "parcel": "^2.0.1"
   }
 }
